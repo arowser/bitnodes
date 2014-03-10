@@ -4,6 +4,19 @@ Bitnodes is currently being developed to estimate the size of the Bitcoin networ
 ## Setup
 See [Provisioning Bitcoin Network Crawler](https://github.com/ayeowch/bitnodes/wiki/Provisioning-Bitcoin-Network-Crawler)
 
+#crawl.py
+crawl node
+
+#ping.py
+
+#chart.py
+
+#resolve.py
+
+#export.py
+
+http://redis4you.com/articles.php?id=014&name=Redis+too+many+open+files+error+on+high+traffic+sites
+
 ## License
 Copyright (c) 2014 Addy Yeow Chin Heng &lt;ayeowch@gmail.com&gt;
 

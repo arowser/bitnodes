@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>bitcoin network versoin chart</title>
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <!-- Custom styles for this template -->
+        <link href="css/cover.css" rel="stylesheet">
+    </head>
+
+<body>
+
+   <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <ul class="nav masthead-nav">
+                <li class="active"><a href="arowser@gmail.com">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="inner cover">
+            <h1 id="bitcointext" class="cover-heading">Active bitcoin nodes: .</h1>
+
+        <div id="bitcoinchart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        <p class="lead">This is a simple service for mointor bitcoin network node version. Its auto scan active bitcoin nodes in 24 hours, and update data about 10 mintues.</p>
+        <p><a class="btn btn-primary btn-lg" href="https://github.com/arowser/bitnodes" target="_blank" role="button">source &raquo;</a></p>
+        </div>
+
+      <hr>
+
+      <footer>
+        <p class="muted credit">&copy; blockindex.info 2014. </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="js/hctheme.js"></script>
+<script src="http://code.highcharts.com/modules/data.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script type="text/javascript">
+   $(function () {
+
+ // Get the CSV and create the chart
+    $.getJSON('/chart.json', function (btcdata) {
+    $('#bitcoinchart').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: 'Active bitcoin node within 24 hours: ' + btcdata.count 
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    connectorColor: '#000000',
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                },
+            legend: {
+                itemStyle: {
+                    width: 190 // or whatever
+                },
+            },
+
+            showInLegend: true
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Bitcon network version',
+            data: btcdata.data
+
+        }]
+    });
+    $('#bitcointext').text('Active bitcoin nodes: ' + btcdata.count);
+});
+});
+
+</script> 
+</body>
+</html>

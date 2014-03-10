@@ -42,6 +42,7 @@ import socket
 import sys
 import time
 from ConfigParser import ConfigParser
+from model import *
 
 from protocol import ProtocolError, Connection, DEFAULT_PORT
 
@@ -55,7 +56,7 @@ DATA_FIELD = 'D'  # __START_HEIGHT__
 GREEN = 'G'  # Reachable node
 
 # Redis connection setup
-REDIS_HOST = os.environ.get('REDIS_HOST', "localhost")
+REDIS_HOST = os.environ.get('REDIS_HOST', "127.0.0.1")
 REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD', None)
 REDIS_CONN = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT,
@@ -69,6 +70,7 @@ def enumerate_node(redis_pipe, key, version_msg, addr_msg):
     Stores start height for a reachable node.
     Adds all peering nodes with max. age of 24 hours into the crawl set.
     """
+
     redis_pipe.hset(key, DATA_FIELD, version_msg.get('start_height', 0))
 
     if 'addr_list' in addr_msg:
@@ -118,10 +120,10 @@ def connect(redis_conn, key):
 
     redis_pipe = redis_conn.pipeline()
     if len(handshake_msgs) > 0:
+        addNode(handshake_msgs[0])
         enumerate_node(redis_pipe, key, handshake_msgs[0], addr_msg)
         redis_pipe.hset(key, TAG_FIELD, GREEN)
     redis_pipe.execute()
-
 
 def dump(nodes):
     """
@@ -200,6 +202,7 @@ def task():
     Assigned to a worker to retrieve (pop) a node from the crawl set and
     attempt to establish connection with a new node.
     """
+
     redis_conn = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT,
                                    password=REDIS_PASSWORD)
 
@@ -213,8 +216,8 @@ def task():
         key = "node:{}-{}".format(node[0], node[1])
 
         # Skip IPv6 node
-        if ":" in key and not SETTINGS['ipv6']:
-            continue
+        #if ":" in key and not SETTINGS['ipv6']:
+        #    continue
 
         if redis_conn.exists(key):
             continue
@@ -228,11 +231,12 @@ def set_start_height():
     Fetches current start height from a remote source. The value is then set
     in Redis for use by all workers.
     """
-    try:
-        start_height = int(requests.get(SETTINGS['height_url']).text)
-    except requests.exceptions.RequestException as err:
-        logging.warning("{}".format(err))
-        start_height = int(REDIS_CONN.get('start_height'))
+    #try:
+    #    start_height = int(requests.get(SETTINGS['height_url']).text)
+    #except requests.exceptions.RequestException as err:
+    #    logging.warning("{}".format(err))
+    #    start_height = int(REDIS_CONN.get('start_height'))
+    start_height = int(REDIS_CONN.get('start_height'))
     logging.info("Start height: {}".format(start_height))
     REDIS_CONN.set('start_height', start_height)
 
